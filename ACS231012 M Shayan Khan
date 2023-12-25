@@ -1,0 +1,152 @@
+Q1 Part B Code
+*****************************
+#include <iostream>
+#include <string>
+using namespace std;
+
+class PaymentMethod {
+public:
+    virtual ~PaymentMethod() = default;  
+
+    virtual void processPayment(double amount) = 0;  
+}; class CreditCard : public PaymentMethod {
+public:
+    void processPayment(double amount) override {
+        cout << "Processing credit card payment of $" << amount << endl;
+    }
+};
+
+class PayPal : public PaymentMethod {
+public:
+    void processPayment(double amount) override {
+        cout << "Processing PayPal payment of $" << amount << endl;
+    }
+}; int main() {
+    PaymentMethod* method1 = new CreditCard();
+    PaymentMethod* method2 = new PayPal();
+
+    method1->processPayment(50.0);
+    method2->processPayment(25.99);
+
+    delete method1;
+    delete method2;
+
+    return 0;
+}
+
+*****************************
+Q 2 Code
+*****************************
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Product {
+public:
+    Product() = default; 
+
+    Product(int id, string name, double price)
+        : m_id(id), m_name(name), m_price(price) {}
+
+    void displayDetails() const {
+        cout << "Product ID: " << m_id << '\n';
+        cout << "Product Name: " << m_name << '\n';
+        cout << "Product Price: " << m_price << '\n';
+    }
+
+    double getPrice() const {
+        return m_price;
+    }
+
+private:
+    int m_id = 0;
+    string m_name = "";
+    double m_price = 0.0;
+};
+
+class ShoppingCart {
+public:
+    ShoppingCart() = default; 
+
+    void addProduct(const Product& product) {
+        if (m_numProducts < MAX_PRODUCTS) {
+            m_products[m_numProducts++] = product;
+        }
+        else {
+            cout << "Cart is full. Cannot add more products.\n";
+        }
+    }
+
+    void displayAllProducts() const {
+        for (int i = 0; i < m_numProducts; ++i) {
+            m_products[i].displayDetails();
+        }
+    }
+
+    double calculateTotalCost() const {
+        double total = 0.0;
+        for (int i = 0; i < m_numProducts; ++i) {
+            total += m_products[i].getPrice();
+        }
+        return total;
+    }
+
+private:
+    static const int MAX_PRODUCTS = 10;
+    int m_numProducts = 0;
+    Product m_products[MAX_PRODUCTS];
+};
+
+class User {
+public:
+    User(int id) : m_id(id) {}
+
+    void displayDetails() const {
+        cout << "User ID: " << m_id << '\n';
+    }
+
+    void setShoppingCart(ShoppingCart* cart) {
+        m_cart = cart;
+    }
+
+    ShoppingCart* getShoppingCart() const {
+        return m_cart;
+    }
+
+private:
+    int m_id;
+    ShoppingCart* m_cart = nullptr;
+};
+
+int main() {
+
+
+    Product p1(1, "Product 1", 10.0);
+    Product p2(2, "Product 2", 20.0);
+    Product p3(3, "Product 3", 30.0);
+
+    ShoppingCart cart;
+    cart.addProduct(p1);
+    cart.addProduct(p2);
+    cart.addProduct(p3);
+
+   
+    User u1(1);
+    User u2(2);
+
+    u1.setShoppingCart(&cart);
+
+    
+    u1.displayDetails();
+    ShoppingCart* userCart = u1.getShoppingCart();
+    if (userCart) {
+        userCart->displayAllProducts();
+        cout << "Total cost: " << userCart->calculateTotalCost() << '\n';
+    }
+    else {
+        cout << "No shopping cart associated.\n";
+    }
+
+    return 0;
+}
